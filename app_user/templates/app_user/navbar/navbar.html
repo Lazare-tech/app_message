@@ -12,7 +12,7 @@
 
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0 nav-menu">
             <li class="nav-item">
-                <a class="nav-link nav-link-home text-dark fw-bold" href="">Home</a>
+                <a class="nav-link nav-link-home text-dark fw-bold" href="{% url 'app_user:homepage' %}">Home</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark fw-bold" href="">Blog</a>
@@ -27,11 +27,9 @@
 
                 <a href="{% url 'compte:message' %}"><button type="button" class="btn btn-primary position-relative me-3">
                     Inbox
-                    {% if messages %}
                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        {% comment %} {{ messages }} {% endcomment %}
+                        {{ message_non_lu_nombre }}
                         <span class="visually-hidden">unread messages</span>
-                        {% endif %}
                     </span>
                 </button></a>
 

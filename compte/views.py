@@ -1,5 +1,6 @@
+from pyexpat.errors import messages
 from django.shortcuts import get_object_or_404, redirect, render
-
+from django.contrib import messages
 from compte.forms import LoginForm, MessageForm, Messageform, SignupForm
 from compte.models import Message, User
 from django.contrib.auth import login, authenticate,logout
@@ -59,10 +60,21 @@ def logout_user(request):
 ##
 @login_required
 def message(request):
-    messages=Message.objects.filter(receiver=request.user).order_by('-date')
+    user=request.user
+    messages=Message.objects.filter(receiver=user).order_by('-date').prefetch_related('responses')
+    messages_envoyer=Message.objects.filter(sender=user).order_by('-date')
+
+    ###
+    messages_non_lu=0
+    if request.user.is_authenticated:
+        messages_non_lu=Message.objects.filter(receiver=request.user)
+        message_sans_reponse=messages_non_lu.filter(responses__isnull=True)
+        messages_non_lu_nombre = message_sans_reponse.count()
   
     context={
         'messages':messages,
+        'message_non_lu_nombre':messages_non_lu_nombre,
+        'messages_envoyer':messages_envoyer
     }
     return render(request,'compte/inbox.html',context)
 #####
@@ -72,10 +84,11 @@ def send_message(request):
         form = MessageForm(request.POST)
         if form.is_valid():
             username=form.cleaned_data['receiver']
+            receiver=get_object_or_404(User,username=username)
             message=form.cleaned_data['contenu']
-            message=Message(sender=request.user,receiver=username,contenu=message)
+            message=Message(sender=request.user,receiver=receiver,contenu=message)
             message.save()
-            return redirect('app_user:homepage')  # Redirige vers une page de confirmation ou autre
+            return redirect('compte:message')  # Redirige vers une page de confirmation ou autre
     else:
         form = MessageForm()
     
@@ -93,7 +106,9 @@ def rep_message(request, message_id):
             response_message = form.save(commit=False)
             response_message.sender = request.user
             response_message.receiver = messages.sender  # L'expéditeur du message original est maintenant le destinataire
+            response_message.response_to=messages
             response_message.save()
+
             return redirect('compte:message')  # Rediriger vers la boîte de réception après l'envoi
 
     else:

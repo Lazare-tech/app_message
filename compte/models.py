@@ -10,6 +10,8 @@ class Message(models.Model):
     contenu=models.TextField(verbose_name='contenu message')
     date=models.DateTimeField(verbose_name='Date heure',auto_now=True)
     lu=models.BooleanField(default=False)
+    response_to = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='responses')  # Réponse associée
+
     
     def __str__(self):
         return f'De {self.sender.username} a {self.receiver.username}'

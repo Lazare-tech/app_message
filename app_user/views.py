@@ -4,11 +4,13 @@ from compte.models import Message
 
 # Create your views here.
 def home(request):
-    messages_non_lu=0
+    messages_non_lu_nombre=0
     if request.user.is_authenticated:
-        messages_non_lu=Message.objects.filter(receiver=request.user,lu=False).count()
-        print('ssss',messages_non_lu)
+        messages_non_lu=Message.objects.filter(receiver=request.user)
+        message_sans_reponse=messages_non_lu.filter(responses__isnull=True)
+        messages_non_lu_nombre = message_sans_reponse.count()
+
     context={
-        'messages':messages_non_lu
+        'message_non_lu_nombre':messages_non_lu_nombre
     }
     return render(request,'app_user/body/index.html',context)

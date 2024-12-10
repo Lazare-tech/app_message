@@ -125,6 +125,7 @@ class MessageForm(forms.ModelForm):
           
         }
         
+    
     def clean_contenu(self):
         message = self.cleaned_data.get('contenu')
      

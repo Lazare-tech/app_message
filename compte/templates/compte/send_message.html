@@ -6,6 +6,15 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">
+                    {% if messages %}
+                    <div id="alertMessage">
+                        {% for message in messages %}
+                            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
                     <h5>Envoyer un message</h5>
                 </div>
                 <div class="card-body">

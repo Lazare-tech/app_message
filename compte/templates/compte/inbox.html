@@ -3,30 +3,55 @@
 <div class="container mt-5 mb-5">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            {% if messages %}
-            {% for messages in messages %}
+            <h6 class="text-muted bg-primary p-2">Vos messages envoyes</h6>
 
-            <div class="card">
-                <div class="card-header">
-                    <h5>Message de {{ messages.sender.username }}</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Message : </strong>{{ messages.contenu }}</p>
-                    <p><small>Envoyé le {{ messages.date }}</small></p>
-                
-                    <hr>
-
-                    <a href="{% url 'compte:rep_message' messages.id %}" class="btn btn-primary">Répondre</a>
-
-                </div>
-               
-            </div>
-            {% endfor %}
-
+            {% if messages_envoyer %}
+                {% for message_envoyer in messages_envoyer %}
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5>Message à {{ message_envoyer.receiver.username }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Message :</strong> {{ message_envoyer.contenu }}</p>
+                            <p><small>Envoyé le {{ message_envoyer.date }}</small></p>
+                        </div>
+                    </div>
+                {% endfor %}
             {% else %}
-            <h6 class="text-muted">Aucun message</h6>
-            <a href="{% url 'compte:send_message'%}"><button class="btn btn-primary">Envoyer un message</button></a>
+                <p class="text-muted">Vous n'avez envoyé aucun message pour le moment.</p>
+
             {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h6 class="text-muted bg-primary p-2">Vos messages reçus</h6>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5>Message de {{ message.sender.username }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Message :</strong> {{ message.contenu }}</p>
+                            <p><small>Reçu le {{ message.date }}</small></p>
+                            <hr>
+                            {# Vérifie si le message n'a pas de réponse associée #}
+                            {% if not message.responses.exists %}
+                                <a href="{% url 'compte:rep_message' message.id %}" class="btn btn-primary">Répondre</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">Vous n'avez reçu aucun message pour le moment.</p>
+            {% endif %}
+            <div class="text-center mt-3">
+                <a href="{% url 'compte:send_message' %}" class="btn btn-primary">Envoyer un nouveau message</a>
+            </div>
         </div>
     </div>
 </div>
