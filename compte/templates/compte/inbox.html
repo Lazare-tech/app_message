@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block main %}
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            {% if messages %}
+            {% for messages in messages %}
+
+            <div class="card">
+                <div class="card-header">
+                    <h5>Message de {{ messages.sender.username }}</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Message : </strong>{{ messages.contenu }}</p>
+                    <p><small>Envoyé le {{ messages.date }}</small></p>
+                
+                    <hr>
+
+                    <a href="{% url 'compte:rep_message' messages.id %}" class="btn btn-primary">Répondre</a>
+
+                </div>
+               
+            </div>
+            {% endfor %}
+
+            {% else %}
+            <h6 class="text-muted">Aucun message</h6>
+            <a href="{% url 'compte:send_message'%}"><button class="btn btn-primary">Envoyer un message</button></a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
